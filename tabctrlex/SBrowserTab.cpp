@@ -646,11 +646,11 @@ namespace SOUI
 		return TRUE;
 	}
 
-	SWND SBrowserTabCtrl::SwndFromPoint(CPoint ptHitTest, BOOL bOnlyText)
+	SWND SBrowserTabCtrl::SwndFromPoint(CPoint ptHitTest, BOOL bIncludeMsgTransparent)
 	{
 		if (ptHitTest.x > m_pBtnNew->GetWindowRect().right)
 			return NULL;
-		return __super::SwndFromPoint(ptHitTest, bOnlyText);
+		return SWindow::SwndFromPoint(ptHitTest, bIncludeMsgTransparent);
 	}
 
 	bool SBrowserTabCtrl::OnBtnCloseTabClick(EventArgs *pEvt)

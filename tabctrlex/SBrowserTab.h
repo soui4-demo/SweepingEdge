@@ -150,7 +150,7 @@ namespace SOUI
 		BOOL UpdateTabTitle(int iTabId, LPCTSTR lpszTitle);
 	protected:
 		int ChangeTabPos(SBrowserTab* pCurMove, CPoint ptCur);
-		virtual SWND SwndFromPoint(CPoint ptHitTest, BOOL bOnlyText);
+		virtual SWND SwndFromPoint(CPoint ptHitTest, BOOL bIncludeMsgTransparent=FALSE);
 		virtual BOOL CreateChildren(pugi::xml_node xmlNode);
 		virtual void UpdateChildrenPosition();
 		virtual void OnNextFrame();
