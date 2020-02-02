@@ -198,7 +198,7 @@ namespace SOUI
 		rcInvalid.IntersectRect(&rcClip, &rcClient);
 		HDC hdc = pRT->GetDC();
 		{
-			BLENDFUNCTION bf = { AC_SRC_OVER,0,GetStyle().m_byAlpha,AC_SRC_ALPHA };
+			BLENDFUNCTION bf = { AC_SRC_OVER,0,GetAlpha(),AC_SRC_ALPHA };
 			AlphaBlend(hdc, rcInvalid.left, rcInvalid.top, rcInvalid.Width(), rcInvalid.Height(), wkeGetViewDC((wkeWebView)m_pWebView), rcInvalid.left - rcClient.left, rcInvalid.top - rcClient.top, rcInvalid.Width(), rcInvalid.Height(), bf);
 		}
 		pRT->ReleaseDC(hdc);

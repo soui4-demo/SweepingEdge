@@ -20,22 +20,18 @@ public:
 	}
 	void close()
 	{
-		CSimpleWnd::DestroyWindow();
+		SNativeWnd::DestroyWindow();
  	}
-// 	void OnPaint(IRenderTarget * pRT)
-// 	{
-// 		m_PrintWnd->Print(pRT);
-// 	}
+
 	CDropWindow();
 	~CDropWindow(); 
 	BEGIN_MSG_MAP_EX(CDropWindow)
 		MSG_WM_CREATE(OnCreate)
 		MSG_WM_DESTROY(OnDestroy)
 		MSG_WM_INITDIALOG(OnInitDialog)
-		//MSG_WM_PAINT_EX(OnPaint)
 		CHAIN_MSG_MAP(SHostWnd)
 		REFLECT_NOTIFICATIONS_EX()
-		END_MSG_MAP()
+	END_MSG_MAP()
 private:
 	BOOL			m_bLayoutInited;
 };

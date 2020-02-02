@@ -12,10 +12,7 @@ int CDropWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 BOOL CDropWindow::OnInitDialog(HWND wndFocus, LPARAM lInitParam)
 {
 	m_bLayoutInited = TRUE;
-	//DWORD dwExStyle= GetWindowLong(GWL_EXSTYLE);
-	//SetWindowLong(GWL_EXSTYLE, dwExStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT);
 	ModifyStyleEx(0,  WS_EX_TRANSPARENT);
-	m_dummyWnd.ModifyStyleEx(0, WS_EX_TRANSPARENT);
 	SetWindowPos(HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);	
 	
 	return 0;
