@@ -1,8 +1,7 @@
-class SUserObjectDefaultRegister : public TObjRefImpl<ISystemObjectRegister>
-{
-public:
-	void RegisterWindows(SObjectFactoryMgr *objFactory) const;
-};
+#include "SMiniblink.h"
+#include "tabctrlex/SBrowserTab.h"
+#include "tabctrlex/SEditEx.h"
+#include "tabctrlex/DropWindow.h"
 
 //Soui 加载器
 class CSouiLoader
@@ -10,8 +9,18 @@ class CSouiLoader
 	SApplication *theApp;
 	SComMgr *pComMgr;
 public:
-	//通过过传入一个ISystemObjectRegister对像来注册用户控件，其余参数和SApplication的参数一致
-	CSouiLoader(HINSTANCE hInst,ISystemObjectRegister &pUserObjRegister=SUserObjectDefaultRegister(), LPCTSTR pszHostClassName = _T("SOUIHOST")) 
+
+	void RegisterWindows() const
+	{	
+#define RegWnd(wndClass) theApp->RegisterWindowClass<wndClass>();
+		RegWnd(SBrowserTabCtrl)	
+			RegWnd(CDropWnd)
+			RegWnd(SRelTabCtrl)
+			RegWnd(SWkeWebkit)
+			RegWnd(SEditEx)
+	}
+
+	CSouiLoader(HINSTANCE hInst, LPCTSTR pszHostClassName = _T("SOUIHOST")) 
 		:theApp(NULL),pComMgr(NULL)
 	{		
 		pComMgr = new SComMgr;
@@ -24,13 +33,7 @@ public:
 		pRenderFactory->SetImgDecoderFactory(pImgDecoderFactory);
 		theApp = new SApplication(pRenderFactory, hInst, pszHostClassName);
 
-		
-
-		//注册用户自定义的东西
-		pUserObjRegister.RegisterLayouts(theApp);
-		pUserObjRegister.RegisterSkins(theApp);
-		pUserObjRegister.RegisterWindows(theApp);
-		pUserObjRegister.RegisterInterpolator(theApp);		
+		RegisterWindows();
 	}
 	~CSouiLoader()
 	{

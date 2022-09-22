@@ -4,9 +4,8 @@
 #include <functional>
 #pragma comment(lib,"imm32.lib")
 #pragma comment(lib,"msimg32.lib")
-namespace SOUI
-{
-	//////////////////////////////////////////////////////////////////////////
+SNSBEGIN
+//////////////////////////////////////////////////////////////////////////
 	// SWkeLoader
 
 
@@ -47,7 +46,7 @@ namespace SOUI
 		_THIS->GetClientRect(&rcClient);
 		CRect rcInvalid(CPoint(x, y), CSize(cx, cy));
 		rcInvalid.OffsetRect(rcClient.TopLeft());
-		_THIS->InvalidateRect(rcInvalid);
+		_THIS->InvalidateRect(&rcInvalid);
 	}
 
 	void wkeLoadUrlEndCallback(wkeWebView webView, void* param, const char *url, void *job, void* buf, int len)
@@ -196,7 +195,7 @@ namespace SOUI
 		GetClientRect(&rcClient);
 		CRect rcInvalid;
 		rcInvalid.IntersectRect(&rcClip, &rcClient);
-		HDC hdc = pRT->GetDC();
+		HDC hdc = pRT->GetDC(0);
 		{
 			BLENDFUNCTION bf = { AC_SRC_OVER,0,GetAlpha(),AC_SRC_ALPHA };
 			AlphaBlend(hdc, rcInvalid.left, rcInvalid.top, rcInvalid.Width(), rcInvalid.Height(), wkeGetViewDC((wkeWebView)m_pWebView), rcInvalid.left - rcClient.left, rcInvalid.top - rcClient.top, rcInvalid.Width(), rcInvalid.Height(), bf);
@@ -529,5 +528,4 @@ namespace SOUI
 			wkeLoadURL(m_pWebView, S_CT2A(m_strUrl, CP_UTF8));
 		return !bLoading;
 	}
-}
-
+SNSEND

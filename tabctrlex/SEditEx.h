@@ -5,19 +5,12 @@ namespace SOUI
 {
 #define EVT_EDIT_KEYRETURN (EVT_EXTERNAL_BEGIN + 600)
 
-	class EventEditKeyReturn : public TplEventArgs<EventEditKeyReturn>
-	{
-		SOUI_CLASS_NAME(EventEditKeyReturn, L"on_edit_return")
-	public:
-		EventEditKeyReturn(SObject *pSender) :TplEventArgs<EventEditKeyReturn>(pSender){}
-		enum { EventID = EVT_EDIT_KEYRETURN };
-	};
-
+	DEF_EVT_EXT(EventEditKeyReturn,EVT_EDIT_KEYRETURN,{int fake;});
 
 	class SEditEx
 		:public SEdit
 	{
-		SOUI_CLASS_NAME(SEditEx, L"editex")
+		DEF_SOBJECT(SEdit, L"editex")
 	public:
 		SEditEx();
 

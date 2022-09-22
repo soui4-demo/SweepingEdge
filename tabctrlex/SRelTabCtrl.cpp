@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SRelTabCtrl.h"
 
+SNSBEGIN
+
 void SRelTabCtrl::InsertItemEx(STabPage *pPage, int iInsert)
 {
 	InsertChild(pPage);
@@ -63,3 +65,5 @@ BOOL SRelTabCtrl::SetPageId(int nIndex, int id)
 
 	return TRUE;
 }
+
+SNSEND

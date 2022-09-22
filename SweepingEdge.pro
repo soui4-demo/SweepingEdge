@@ -6,17 +6,9 @@ TEMPLATE = app
 TARGET = SweepingEdge
 INCLUDEPATH += .
 
-include($$(SOUI3PATH)/demo_com.pri)
+include($$(SOUI4PATH)/demo_com.pri)
 
 INCLUDEPATH += ./mblib
-
-
-CONFIG(debug,debug|release){
-	LIBS += utilitiesd.lib soui3d.lib
-}
-else{
-	LIBS += utilities.lib soui3.lib
-}
 
 PRECOMPILED_HEADER = stdafx.h
 RC_FILE += SweepingEdge.rc

@@ -4,11 +4,11 @@
 
 cmake_minimum_required(VERSION 3.4.3)
 project(SweepingEdge)
-file (TO_CMAKE_PATH "$ENV{SOUIPATH}" SOUI_ROOT)
+file (TO_CMAKE_PATH "$ENV{SOUI4PATH}" SOUI_ROOT)
 
 message(STATUS "SOUI_ROOT: ${SOUI_ROOT}")
 if ("${SOUI_ROOT}" STREQUAL "")
-	message(FATAL_ERROR "FATAL:can't find env variable SOUIPATH, clone soui core and install wizard first, please.")
+	message(FATAL_ERROR "FATAL:can't find env variable SOUI4PATH, clone soui core and install wizard first, please.")
 endif()
 
 include(${SOUI_ROOT}/__cmake/cotire.cmake)

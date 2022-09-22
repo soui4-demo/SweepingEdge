@@ -4,8 +4,8 @@
 
 class CDropWnd : public SWindow
 {
-	SOUI_CLASS_NAME(CDropWnd, L"dropwindow")
-	CAutoRefPtr<IRenderTarget> m_memRT;
+	DEF_SOBJECT(SWindow, L"dropwindow")
+	SAutoRefPtr<IRenderTarget> m_memRT;
 protected:
 	void OnPaint(IRenderTarget *pRT);
 public:

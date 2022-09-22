@@ -6,71 +6,35 @@
 #include "SAnimator.h"
 #include "SRelTabCtrl.h"
 
-namespace SOUI
-{
+SNSBEGIN
 
 #define EVT_WEBTAB_BEGIN (EVT_EXTERNAL_BEGIN + 400)
 #define EVT_WEBTAB_NEW           (EVT_WEBTAB_BEGIN + 0)
 #define EVT_WEBTAB_CLOSE         (EVT_WEBTAB_BEGIN + 1)
 #define EVT_WEBTAB_SELCHANGED    (EVT_WEBTAB_BEGIN + 2)
 #define EVT_WEBTAB_GETICON   (EVT_WEBTAB_BEGIN + 3)//这个图标暂不用，因为可以和EventBrowserTabNew共用
-	class EventBrowserTabNew : public TplEventArgs < EventBrowserTabNew >
-	{
-		SOUI_CLASS_NAME(EventBrowserTabNew, L"on_webtab_new")
-	public:
-		EventBrowserTabNew(SWindow *pSender) :TplEventArgs<EventBrowserTabNew>(pSender)
-		{
 
-		}
-		enum{ EventID = EVT_WEBTAB_NEW };
-		SWindow * pNewTab;
-		LPCTSTR		pszTitle;
-		void *		pData;
-		int       iNewTab;
-	};
-	class EventBrowserTabGetIcon : public TplEventArgs < EventBrowserTabGetIcon >
-	{
-		SOUI_CLASS_NAME(EventBrowserTabGetIcon, L"on_webtab_getico")
-	public:
-		EventBrowserTabGetIcon(SWindow *pSender) :TplEventArgs<EventBrowserTabGetIcon>(pSender)
-		{
+DEF_EVT_EXT(EventBrowserTabNew,EVT_WEBTAB_NEW,{
+	SWindow * pNewTab;
+	LPCTSTR		pszTitle;
+	void *		pData;
+	int       iNewTab;
+});
 
-		}
-		enum {
-			EventID = EVT_WEBTAB_GETICON
-		};
-		SWindow * pTab;
-	};
+DEF_EVT_EXT(EventBrowserTabGetIcon,EVT_WEBTAB_GETICON,{
+	SWindow * pTab;
+});
 
-	class EventBrowserTabClose : public TplEventArgs < EventBrowserTabClose >
-	{
-		SOUI_CLASS_NAME(EventBrowserTabClose, L"on_webtab_close")
-	public:
-		EventBrowserTabClose(SWindow *pSender) :TplEventArgs<EventBrowserTabClose>(pSender)//, bClose(true)
-		{
+DEF_EVT_EXT(EventBrowserTabClose,EVT_WEBTAB_CLOSE,{
+	SWindow * pCloseTab;
+	int       iCloseTab;
+	int       iCloseTabId;
+});
 
-		}
-		enum{ EventID = EVT_WEBTAB_CLOSE };
-
-		SWindow * pCloseTab;
-		int       iCloseTab;
-		int       iCloseTabId;
-		//bool	bClose;
-	};
-
-	class EventBrowserTabSelChanged : public TplEventArgs < EventBrowserTabSelChanged >
-	{
-		SOUI_CLASS_NAME(EventBrowserTabSelChanged, L"on_webtab_sel_changed")
-	public:
-		EventBrowserTabSelChanged(SWindow *pSender) :TplEventArgs<EventBrowserTabSelChanged>(pSender)
-		{
-
-		}
-		enum{ EventID = EVT_WEBTAB_SELCHANGED };
-
-		int         iOldSel;
-		int         iNewSel;
-	};
+DEF_EVT_EXT(EventBrowserTabSelChanged,EVT_WEBTAB_SELCHANGED,{
+	int         iOldSel;
+	int         iNewSel;
+});
 
 	class SBrowserTab;
 
@@ -112,7 +76,7 @@ namespace SOUI
 
 	class SBrowserTabCtrl : public SWindow, public ITimelineHandler
 	{
-		SOUI_CLASS_NAME(SBrowserTabCtrl, L"BrowserTabCtrl")
+		DEF_SOBJECT(SWindow, L"BrowserTabCtrl")
 			friend class SBrowserTab;
 	public:
 		enum TABDIR{
@@ -151,12 +115,12 @@ namespace SOUI
 	protected:
 		int ChangeTabPos(SBrowserTab* pCurMove, CPoint ptCur);
 		virtual SWND SwndFromPoint(CPoint ptHitTest, BOOL bIncludeMsgTransparent=FALSE);
-		virtual BOOL CreateChildren(pugi::xml_node xmlNode);
-		virtual void UpdateChildrenPosition();
-		virtual void OnNextFrame();
-		bool OnBtnNewClick(EventArgs *pEvt);
-		bool OnBtnCloseTabClick(EventArgs *pEvt);
-		bool OnTabClick(EventArgs *pEvt);
+		virtual BOOL CreateChildren(SXmlNode xmlNode) override;
+		virtual void WINAPI UpdateChildrenPosition();
+		virtual void WINAPI OnNextFrame();
+		BOOL OnBtnNewClick(EventArgs *pEvt);
+		BOOL OnBtnCloseTabClick(EventArgs *pEvt);
+		BOOL OnTabClick(EventArgs *pEvt);
 		int OnCreate(LPVOID);
 		void OnDestroy();
 
@@ -186,17 +150,17 @@ namespace SOUI
 		SRelTabCtrl*	m_pRelTabCtrl;
 		SScrollView*	m_pTabContainer;
 
-		pugi::xml_document  m_xmlStyle;
+		SXmlDoc  m_xmlStyle;
 		SHostWindowFactory *m_HostFactory;
 		int    m_nTabCount;		
 	};
 	class SPrintWindow : public SWindow
 	{
-		SOUI_CLASS_NAME(SPrintWindow, L"SPrintWindow")
+		DEF_SOBJECT(SWindow, L"SPrintWindow")
 	public:
 		SPrintWindow(SWindow *pHostCtrl);
 		//更新
-		void Update();
+		void WINAPI Update();
 		void Print(IRenderTarget *pRT, CRect &rcWindow);
 	protected:
 		CAutoRefPtr<IRenderTarget> m_memRT;
@@ -206,7 +170,7 @@ namespace SOUI
 	// SBrowserTab
 	class SBrowserTab : public SWindow, public SAnimator
 	{
-		SOUI_CLASS_NAME(SBrowserTab, L"BrowserTab")
+		DEF_SOBJECT(SWindow, L"BrowserTab")
 			friend class SBrowserTabCtrl;
 	public:
 		SBrowserTab(SBrowserTabCtrl* pHost);
@@ -258,7 +222,7 @@ namespace SOUI
 
 	protected:
 		virtual void OnAnimatorState(int percent);
-		virtual void OnFinalRelease() { delete this; }
+		virtual void WINAPI OnFinalRelease() { delete this; }
 		virtual void OnStateChanged(DWORD dwOldState, DWORD dwNewState)
 		{
 			__super::OnStateChanged(dwOldState, dwNewState);
@@ -294,5 +258,5 @@ namespace SOUI
 	private:
 		CRect m_ParentWinrc;
 	};
-}
-	
+
+SNSEND	

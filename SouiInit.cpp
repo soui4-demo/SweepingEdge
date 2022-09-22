@@ -24,7 +24,7 @@
 #define SYS_NAMED_RESOURCE _T("soui-sys-resource.dll")
 #endif
 #include "SMiniblink.h"
-
+#include <SouiFactory.h>
 
 //定义唯一的一个R,UIRES对象,ROBJ_IN_CPP是resource.h中定义的宏。
 ROBJ_IN_CPP
@@ -50,6 +50,7 @@ void InitDir(TCHAR *Path)
 
 void InitSystemRes(SApplication * theApp,SComMgr *pComMgr)
 {
+	SouiFactory souiFac;
 #ifdef _DEBUG
 	//选择了仅在Release版本打包资源则系统资源在DEBUG下始终使用DLL加载
 	{
@@ -57,7 +58,7 @@ void InitSystemRes(SApplication * theApp,SComMgr *pComMgr)
 		if (hModSysResource)
 		{
 			CAutoRefPtr<IResProvider> sysResProvider;
-			CreateResProvider(RES_PE, (IObjRef**)&sysResProvider);
+			souiFac.CreateResProvider(RES_PE, (IObjRef**)&sysResProvider);
 			sysResProvider->Init((WPARAM)hModSysResource, 0);
 			theApp->LoadSystemNamedResource(sysResProvider);
 			FreeLibrary(hModSysResource);
@@ -74,7 +75,7 @@ void InitSystemRes(SApplication * theApp,SComMgr *pComMgr)
 		if (hModSysResource)
 		{
 			CAutoRefPtr<IResProvider> sysResProvider;
-			CreateResProvider(RES_PE, (IObjRef**)&sysResProvider);
+			souiFac.CreateResProvider(RES_PE, (IObjRef**)&sysResProvider);
 			sysResProvider->Init((WPARAM)hModSysResource, 0);
 			theApp->LoadSystemNamedResource(sysResProvider);
 			FreeLibrary(hModSysResource);
@@ -89,32 +90,23 @@ void InitSystemRes(SApplication * theApp,SComMgr *pComMgr)
 
 void InitUserRes(SApplication * theApp, SComMgr *pComMgr)
 {
+	SouiFactory souiFac;
 	CAutoRefPtr<IResProvider>   pResProvider;
 
 #ifdef _DEBUG		
 	//选择了仅在Release版本打包资源则在DEBUG下始终使用文件加载
 	{
-		CreateResProvider(RES_FILE, (IObjRef**)&pResProvider);
+		souiFac.CreateResProvider(RES_FILE, (IObjRef**)&pResProvider);
 		BOOL bLoaded = pResProvider->Init((LPARAM)_T("uires"), 0);
 		SASSERT(bLoaded);
 	}
 #else
 	{
-		CreateResProvider(RES_PE, (IObjRef**)&pResProvider);
+		souiFac.CreateResProvider(RES_PE, (IObjRef**)&pResProvider);
 		BOOL bLoaded = pResProvider->Init((WPARAM)theApp->GetInstance(), 0);
 		SASSERT(bLoaded);
 	}
 #endif
 	theApp->InitXmlNamedID(namedXmlID, ARRAYSIZE(namedXmlID), TRUE);
 	theApp->AddResProvider(pResProvider);
-}
-
-void SUserObjectDefaultRegister::RegisterWindows(SObjectFactoryMgr * objFactory) const
-{	
-#define RegWnd(wndClass) objFactory->TplRegisterFactory<wndClass>();
-	RegWnd(SBrowserTabCtrl)	
-	RegWnd(CDropWnd)
-	RegWnd(SRelTabCtrl)
-	RegWnd(SWkeWebkit)
-	RegWnd(SEditEx)
 }

@@ -1,8 +1,8 @@
 #pragma once
 #include "../mblib/wke.h"
-namespace SOUI
-{   
-    class SWkeLoader
+SNSBEGIN
+
+class SWkeLoader
     {    
     public:
         SWkeLoader();
@@ -22,50 +22,27 @@ namespace SOUI
 #define EVT_WKE_UPDATATITLE (EVT_WKE_BEGIN + 1)
 #define EVT_WKE_UPDATAURL (EVT_WKE_BEGIN + 2)
 #define EVT_WKE_NEW_NAV (EVT_WKE_BEGIN + 3)
-	class EventBrowserTitleChanged : public TplEventArgs < EventBrowserTitleChanged >
-	{
-		SOUI_CLASS_NAME(EventBrowserTitleChanged, L"on_title_changed")
-	public:
-		EventBrowserTitleChanged(SWindow *pSender) :TplEventArgs<EventBrowserTitleChanged>(pSender)
-		{
-		}
-		enum {
-			EventID = EVT_WKE_UPDATATITLE
-		};		
+
+	DEF_EVT_EXT(EventBrowserTitleChanged,EVT_WKE_UPDATATITLE,{
 		LPCTSTR		pszTitle;
 		int       iId;
-	};
-	class EventBrowserUrlChanged : public TplEventArgs < EventBrowserUrlChanged >
-	{
-		SOUI_CLASS_NAME(EventBrowserUrlChanged, L"on_title_changed")
-	public:
-		EventBrowserUrlChanged(SWindow *pSender) :TplEventArgs<EventBrowserUrlChanged>(pSender)
-		{
-		}
-		enum {
-			EventID = EVT_WKE_UPDATAURL
-		};
+	});
+
+	DEF_EVT_EXT(EventBrowserUrlChanged,EVT_WKE_UPDATAURL,{
 		LPCTSTR		pszUrl;
 		int			iId;
-	};
+	});
 
-	class EventBrowserNewNav : public TplEventArgs < EventBrowserNewNav >
-	{
-		SOUI_CLASS_NAME(EventBrowserNewNav, L"on_new_nav")
-	public:
-		EventBrowserNewNav(SWindow *pSender) :TplEventArgs<EventBrowserNewNav>(pSender), pRetView(NULL)
-		{
-		}
-		enum {
-			EventID = EVT_WKE_NEW_NAV
-		};
+
+	DEF_EVT_EXT(EventBrowserNewNav,EVT_WKE_NEW_NAV,{
 		LPCTSTR		pszUrl;
 		int			iId;
 		wkeWebView pRetView;
-	};
+	});
+
     class SWkeWebkit : public SWindow
     {
-        SOUI_CLASS_NAME(SWkeWebkit, L"wkeWebkit")
+        DEF_SOBJECT(SWindow, L"wkeWebkit")
     public:
         SWkeWebkit(void);
         ~SWkeWebkit(void);
@@ -128,4 +105,5 @@ namespace SOUI
         SStringW m_strUrl;
 		CSize m_szRtSize;
     };
-}
+
+SNSEND

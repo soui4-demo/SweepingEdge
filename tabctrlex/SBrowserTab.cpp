@@ -287,7 +287,7 @@ namespace SOUI
 	}
 	BOOL SBrowserTab::RevokeDragDrop()
 	{
-		return GetContainer()->RevokeDragDrop(GetSwnd());
+		return GetContainer()->UnregisterDragDrop(GetSwnd());
 	}
 	void SBrowserTab::OnDestroy()
 	{
@@ -411,32 +411,32 @@ namespace SOUI
 		return 1;
 	}
 
-	BOOL SBrowserTabCtrl::CreateChildren(pugi::xml_node xmlNode)
+	BOOL SBrowserTabCtrl::CreateChildren(SXmlNode xmlNode)
 	{
 		//m_xmlStyle.append_copy(xmlNode);
-		pugi::xml_node xmlTabStyle = xmlNode.child(KXmlTabStyle);
+		SXmlNode xmlTabStyle = xmlNode.child(KXmlTabStyle);
 
 		if (xmlTabStyle)
 		{
-			m_xmlStyle.append_copy(xmlTabStyle);
+			m_xmlStyle.root().append_copy(xmlTabStyle);
 		}		
 		
 		//title
-		pugi::xml_node xmlTitle = xmlNode.child(KXmlTitleStyle);
+		SXmlNode xmlTitle = xmlNode.child(KXmlTitleStyle);
 		if (xmlTitle)
 		{
-			m_xmlStyle.append_copy(xmlTitle);
+			m_xmlStyle.root().append_copy(xmlTitle);
 		}
-		pugi::xml_node xmlCloseBtn = xmlNode.child(KXmlCloseBtnStyle);
+		SXmlNode xmlCloseBtn = xmlNode.child(KXmlCloseBtnStyle);
 		if (xmlCloseBtn)
 		{
-			m_xmlStyle.append_copy(xmlCloseBtn);
+			m_xmlStyle.root().append_copy(xmlCloseBtn);
 		}	
 
 
-		pugi::xml_node xmlTabs = xmlNode.child(L"tabs");//所有tab都必须在tabs标签内
+		SXmlNode xmlTabs = xmlNode.child(L"tabs");//所有tab都必须在tabs标签内
 
-		for (pugi::xml_node xmlChild = xmlTabs.first_child(); xmlChild; xmlChild = xmlChild.next_sibling())
+		for (SXmlNode xmlChild = xmlTabs.first_child(); xmlChild; xmlChild = xmlChild.next_sibling())
 		{
 			if (wcscmp(xmlChild.name(), SBrowserTab::GetClassName()) != 0)
 				continue;
@@ -446,38 +446,38 @@ namespace SOUI
 			m_lstTabOrder.Add(pTab);
 			InsertChild(pTab);
 			if (xmlTabStyle)
-				pTab->InitFromXml(xmlTabStyle);
+				pTab->InitFromXml(&xmlTabStyle);
 			
 			//title
-			pugi::xml_node xmlTitle = m_xmlStyle.child(KXmlTitleStyle);
+			SXmlNode xmlTitle = m_xmlStyle.root().child(KXmlTitleStyle);
 			if (xmlTitle)
 			{
 				SWindow *pTitle = SApplication::getSingleton().CreateWindowByName(SStatic::GetClassName());
 				pTab->InsertChild(pTitle);
-				pTitle->InitFromXml(xmlTitle);
+				pTitle->InitFromXml(&xmlTitle);
 			}
-			pugi::xml_node xmlCloseBtn = m_xmlStyle.child(KXmlCloseBtnStyle);
+			SXmlNode xmlCloseBtn = m_xmlStyle.root().child(KXmlCloseBtnStyle);
 			if (xmlCloseBtn)
 			{
 				if (!pTab->m_bAllowClose) continue;
 				SWindow *pBtn = SApplication::getSingleton().CreateWindowByName(SImageButton::GetClassName());
 				pTab->InsertChild(pBtn);
-				pBtn->InitFromXml(xmlCloseBtn);
+				pBtn->InitFromXml(&xmlCloseBtn);
 				pBtn->GetEventSet()->subscribeEvent(EventCmd::EventID, Subscriber(&SBrowserTabCtrl::OnBtnCloseTabClick, this));
 			}
-			pTab->InitFromXml(xmlChild);
+			pTab->InitFromXml(&xmlChild);
 
 			//pTab->SetTitle(xmlChild.value(),xmlChild.attribute(L"tip").value());
 			pTab->GetEventSet()->subscribeEvent(EventCmd::EventID, Subscriber(&SBrowserTabCtrl::OnTabClick, this));
 		}
 
-		pugi::xml_node xmlNewBtn = xmlNode.child(KXmlNewBtnStyle);
+		SXmlNode xmlNewBtn = xmlNode.child(KXmlNewBtnStyle);
 		if (xmlNewBtn)
 		{
 			m_pBtnNew = new SBrowserTab(this);
 			InsertChild(m_pBtnNew);
 			m_pBtnNew->m_iOrder = -1;
-			m_pBtnNew->InitFromXml(xmlNewBtn);
+			m_pBtnNew->InitFromXml(&xmlNewBtn);
 			m_pBtnNew->GetEventSet()->subscribeEvent(EventCmd::EventID, Subscriber(&SBrowserTabCtrl::OnBtnNewClick, this));
 		}
 		return TRUE;
@@ -541,7 +541,7 @@ namespace SOUI
 
 	}
 
-	bool SBrowserTabCtrl::OnBtnNewClick(EventArgs *pEvt)
+	BOOL SBrowserTabCtrl::OnBtnNewClick(EventArgs *pEvt)
 	{
 		InsertTab(L"新建选项卡", L"https://cn.bing.com");
 		return true;
@@ -653,9 +653,9 @@ namespace SOUI
 		return SWindow::SwndFromPoint(ptHitTest, bIncludeMsgTransparent);
 	}
 
-	bool SBrowserTabCtrl::OnBtnCloseTabClick(EventArgs *pEvt)
+	BOOL SBrowserTabCtrl::OnBtnCloseTabClick(EventArgs *pEvt)
 	{
-		SWindow *pBtn = (SWindow*)pEvt->sender;
+		SWindow *pBtn = (SWindow*)pEvt->Sender();
 		SBrowserTab *pTab = (SBrowserTab*)pBtn->GetParent();
 
 		EventBrowserTabClose evt(this);
@@ -671,9 +671,9 @@ namespace SOUI
 		return true;
 	}
 
-	bool SBrowserTabCtrl::OnTabClick(EventArgs *pEvt)
+	BOOL SBrowserTabCtrl::OnTabClick(EventArgs *pEvt)
 	{
-		SBrowserTab *pTab = (SBrowserTab*)pEvt->sender;
+		SBrowserTab *pTab = (SBrowserTab*)pEvt->Sender();
 		SetCurSel(pTab->m_iOrder);
 		return true;
 	}
@@ -758,9 +758,9 @@ namespace SOUI
 			if (m_lstTabOrder[i]->m_iOrder >= iPos)
 				m_lstTabOrder[i]->m_iOrder++;
 		}
-		pugi::xml_node xmlTabStyle = m_xmlStyle.child(KXmlTabStyle);
+		SXmlNode xmlTabStyle = m_xmlStyle.root().child(KXmlTabStyle);
 		if (xmlTabStyle)
-			pNewTab->InitFromXml(xmlTabStyle);
+			pNewTab->InitFromXml(&xmlTabStyle);
 		pNewTab->GetEventSet()->subscribeEvent(EventCmd::EventID, Subscriber(&SBrowserTabCtrl::OnTabClick, this));
 		m_lstTabOrder.InsertAt(iPos, pNewTab);
 
@@ -777,22 +777,22 @@ namespace SOUI
 			rcLeft.right = rcLeft.left;
 		}
 		
-		pugi::xml_node xmlTitle = m_xmlStyle.child(KXmlTitleStyle);
+		SXmlNode xmlTitle = m_xmlStyle.root().child(KXmlTitleStyle);
 		if (xmlTitle)
 		{
 			SWindow *pTitle = SApplication::getSingleton().CreateWindowByName(SStatic::GetClassName());
 			pNewTab->InsertChild(pTitle);
-			pTitle->InitFromXml(xmlTitle);
+			pTitle->InitFromXml(&xmlTitle);
 			pTitle->SetName(Name_Title_Lable);
 			if (pszTitle)
 				pNewTab->SetTitle(pszTitle);
 		}
-		pugi::xml_node xmlCloseBtn = m_xmlStyle.child(KXmlCloseBtnStyle);
+		SXmlNode xmlCloseBtn = m_xmlStyle.root().child(KXmlCloseBtnStyle);
 		if (xmlCloseBtn && pNewTab->m_bAllowClose)
 		{
 			SWindow *pBtn = SApplication::getSingleton().CreateWindowByName(SImageButton::GetClassName());
 			pNewTab->InsertChild(pBtn);
-			pBtn->InitFromXml(xmlCloseBtn);
+			pBtn->InitFromXml(&xmlCloseBtn);
 			pBtn->SetName(Name_Btn_Close);
 			pBtn->GetEventSet()->subscribeEvent(EventCmd::EventID, Subscriber(&SBrowserTabCtrl::OnBtnCloseTabClick, this));
 		}
@@ -819,9 +819,9 @@ namespace SOUI
 	{
 		for (UINT i = 0; i < m_lstTabOrder.GetCount(); i++)
 		{
-			m_lstTabOrder[i]->Update();
+			m_lstTabOrder[i]->Invalidate();
 		}
-		if (m_pBtnNew) m_pBtnNew->Update();
+		if (m_pBtnNew) m_pBtnNew->Invalidate();
 	}
 
 	int SBrowserTabCtrl::OnCreate(LPVOID)
