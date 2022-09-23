@@ -819,9 +819,9 @@ namespace SOUI
 	{
 		for (UINT i = 0; i < m_lstTabOrder.GetCount(); i++)
 		{
-			m_lstTabOrder[i]->Invalidate();
+			m_lstTabOrder[i]->UpdateAnimator();
 		}
-		if (m_pBtnNew) m_pBtnNew->Invalidate();
+		if (m_pBtnNew) m_pBtnNew->UpdateAnimator();
 	}
 
 	int SBrowserTabCtrl::OnCreate(LPVOID)
