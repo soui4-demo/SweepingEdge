@@ -452,7 +452,7 @@ namespace SOUI
 			SXmlNode xmlTitle = m_xmlStyle.root().child(KXmlTitleStyle);
 			if (xmlTitle)
 			{
-				SWindow *pTitle = SApplication::getSingleton().CreateWindowByName(SStatic::GetClassName());
+				SWindow *pTitle = CreateChildByName(SStatic::GetClassName());
 				pTab->InsertChild(pTitle);
 				pTitle->InitFromXml(&xmlTitle);
 			}
@@ -460,7 +460,7 @@ namespace SOUI
 			if (xmlCloseBtn)
 			{
 				if (!pTab->m_bAllowClose) continue;
-				SWindow *pBtn = SApplication::getSingleton().CreateWindowByName(SImageButton::GetClassName());
+				SWindow *pBtn = CreateChildByName(SImageButton::GetClassName());
 				pTab->InsertChild(pBtn);
 				pBtn->InitFromXml(&xmlCloseBtn);
 				pBtn->GetEventSet()->subscribeEvent(EventCmd::EventID, Subscriber(&SBrowserTabCtrl::OnBtnCloseTabClick, this));
@@ -780,7 +780,7 @@ namespace SOUI
 		SXmlNode xmlTitle = m_xmlStyle.root().child(KXmlTitleStyle);
 		if (xmlTitle)
 		{
-			SWindow *pTitle = SApplication::getSingleton().CreateWindowByName(SStatic::GetClassName());
+			SWindow *pTitle = CreateChildByName(SStatic::GetClassName());
 			pNewTab->InsertChild(pTitle);
 			pTitle->InitFromXml(&xmlTitle);
 			pTitle->SetName(Name_Title_Lable);
@@ -790,7 +790,7 @@ namespace SOUI
 		SXmlNode xmlCloseBtn = m_xmlStyle.root().child(KXmlCloseBtnStyle);
 		if (xmlCloseBtn && pNewTab->m_bAllowClose)
 		{
-			SWindow *pBtn = SApplication::getSingleton().CreateWindowByName(SImageButton::GetClassName());
+			SWindow *pBtn = CreateChildByName(SImageButton::GetClassName());
 			pNewTab->InsertChild(pBtn);
 			pBtn->InitFromXml(&xmlCloseBtn);
 			pBtn->SetName(Name_Btn_Close);

@@ -57,8 +57,8 @@ void InitSystemRes(SApplication * theApp,SComMgr *pComMgr)
 		HMODULE hModSysResource = LoadLibrary(SYS_NAMED_RESOURCE);
 		if (hModSysResource)
 		{
-			CAutoRefPtr<IResProvider> sysResProvider;
-			souiFac.CreateResProvider(RES_PE, (IObjRef**)&sysResProvider);
+			SAutoRefPtr<IResProvider> sysResProvider;
+			sysResProvider.Attach(souiFac.CreateResProvider(RES_PE));
 			sysResProvider->Init((WPARAM)hModSysResource, 0);
 			theApp->LoadSystemNamedResource(sysResProvider);
 			FreeLibrary(hModSysResource);
@@ -75,7 +75,7 @@ void InitSystemRes(SApplication * theApp,SComMgr *pComMgr)
 		if (hModSysResource)
 		{
 			CAutoRefPtr<IResProvider> sysResProvider;
-			souiFac.CreateResProvider(RES_PE, (IObjRef**)&sysResProvider);
+			sysResProvider.Attach(souiFac.CreateResProvider(RES_PE));
 			sysResProvider->Init((WPARAM)hModSysResource, 0);
 			theApp->LoadSystemNamedResource(sysResProvider);
 			FreeLibrary(hModSysResource);
@@ -96,14 +96,14 @@ void InitUserRes(SApplication * theApp, SComMgr *pComMgr)
 #ifdef _DEBUG		
 	//选择了仅在Release版本打包资源则在DEBUG下始终使用文件加载
 	{
-		souiFac.CreateResProvider(RES_FILE, (IObjRef**)&pResProvider);
+		pResProvider.Attach(souiFac.CreateResProvider(RES_FILE));
 		BOOL bLoaded = pResProvider->Init((LPARAM)_T("uires"), 0);
 		SASSERT(bLoaded);
 	}
 #else
 	{
-		souiFac.CreateResProvider(RES_PE, (IObjRef**)&pResProvider);
-		BOOL bLoaded = pResProvider->Init((WPARAM)theApp->GetInstance(), 0);
+		pResProvider.Attach(souiFac.CreateResProvider(RES_PE));
+		BOOL bLoaded = pResProvider->Init((WPARAM)theApp->GetModule(), 0);
 		SASSERT(bLoaded);
 	}
 #endif
