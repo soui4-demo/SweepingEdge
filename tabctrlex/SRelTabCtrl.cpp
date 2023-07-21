@@ -10,7 +10,8 @@ void SRelTabCtrl::InsertItemEx(STabPage *pPage, int iInsert)
 		iInsert = m_lstPages.GetCount();
 	m_lstPages.InsertAt(iInsert, pPage);
 
-	CRect rcPage = GetChildrenLayoutRect();
+	CRect rcPage ;
+	GetChildrenLayoutRect(&rcPage);
 	pPage->Move(&rcPage);
 	pPage->SetVisible(FALSE, FALSE);
 	if (m_nCurrentPage >= iInsert)  m_nCurrentPage++;
